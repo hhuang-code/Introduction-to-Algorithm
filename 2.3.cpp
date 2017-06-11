@@ -100,3 +100,38 @@ int Binary_search_iteration(vector<int> v, int t){
 
     return -1;
 }
+
+/**Insertion sort, combined with binary search; ascending order**/
+/*2.3-6*/
+/*
+    Given a number t and an ascending ordered array, find the first number in the array that is larger than t.
+    If not found, return (max_index_of_array + 1).
+*/
+int Binary_search_first_larger(vector<int> v, int s, int e, int t){
+    int mid = (s + e) / 2;
+    while(s <= e){
+        if(v[mid] <= t){
+            s = mid + 1;
+            mid = (s + e) / 2;
+        }else{
+            e = mid - 1;
+            mid = (s + e) / 2;
+        }
+    }
+
+    return s;
+}
+
+vector<int> INSERTION_SORT_BS(vector<int> v){
+    int len = v.size();
+    for(int i = 1; i < len; i++){
+        int key = v[i];
+        int j = Binary_search_first_larger(v, 0, i - 1, key);
+        for(int k = i - 1; k >= j; k--){
+            v[k + 1] = v[k];
+        }
+        v[j] = key;
+    }
+
+    return v;
+}
