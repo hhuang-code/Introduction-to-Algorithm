@@ -41,3 +41,22 @@ void MERGE_SORT(vector<int>& v, int p, int r){
         MERGE(v, p, q, r);
     }
 }
+
+/**Insertion sort, ascending order, recursion version**/
+/*2.3-4*/
+void INSERTION(vector<int>& v, int s, int e, int n){
+    for(int i = s; i <= e; i++){
+        if(v[i] > v[n]){
+            int tmp = v[i];
+            v[i] = v[n];
+            v[n] = tmp;
+        }
+    }
+}
+
+void INSERTION_SORT_RECURSION(vector<int>& v, int s, int e){
+    if(s < e){
+        INSERTION_SORT_RECURSION(v, s, e - 1);
+        INSERTION(v, s, e - 1, e);
+    }
+}
