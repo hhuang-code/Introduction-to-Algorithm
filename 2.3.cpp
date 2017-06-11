@@ -60,3 +60,43 @@ void INSERTION_SORT_RECURSION(vector<int>& v, int s, int e){
         INSERTION(v, s, e - 1, e);
     }
 }
+
+/** Binary search, recursion version**/
+/** Suppose the array is in ascending order**/
+/*2.3-5*/
+int Binary_search_recursion(vector<int> v, int s, int e, int t){
+    if(s <= e){
+        int mid = (s + e) / 2;
+        if(v[mid] == t){
+            return mid;
+        }else if(v[mid] < t){
+            return Binary_search_recursion(v, mid + 1, e, t);
+        }else{
+            return Binary_search_recursion(v, s, mid - 1, t);
+        }
+    }else{
+        return -1;
+    }
+}
+
+/** Binary search, iteration version**/
+/** Suppose the array is in ascending order**/
+/*2.3-5*/
+int Binary_search_iteration(vector<int> v, int t){
+    int s = 0;
+    int e = v.size() - 1;
+    int mid = (s + e) / 2;
+    while(s <= e){
+        if(v[mid] == t){
+            return mid;
+        }else if(v[mid] < t){
+            s = mid + 1;
+            mid = (s + e) / 2;
+        }else{
+            e = mid - 1;
+            mid = (s + e) / 2;
+        }
+    }
+
+    return -1;
+}
