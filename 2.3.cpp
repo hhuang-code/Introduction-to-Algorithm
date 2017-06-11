@@ -148,7 +148,7 @@ bool IS_SUM_EQUAL(set<int> s, int x){
     MERGE_SORT(v, 0, size - 1);     //O(nlgn)
 
     int index = -1;
-    for(int i = 0; i < size - 1; i++){
+    for(int i = 0; i < size; i++){
         index = Binary_search_iteration(v, x - v[i]);   //O(n * lgn)
         if(index != -1 && index != i){
             return true;
