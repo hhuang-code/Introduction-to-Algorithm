@@ -135,3 +135,25 @@ vector<int> INSERTION_SORT_BS(vector<int> v){
 
     return v;
 }
+
+/*2.3-7*/
+bool IS_SUM_EQUAL(set<int> s, int x){
+    int size = s.size();
+    vector<int> v;
+    set<int>::iterator iter;
+    for(iter = s.begin(); iter != s.end(); iter++){
+        v.push_back(*iter);
+    }
+
+    MERGE_SORT(v, 0, size - 1);     //O(nlgn)
+
+    int index = -1;
+    for(int i = 0; i < size - 1; i++){
+        index = Binary_search_iteration(v, x - v[i]);   //O(n * lgn)
+        if(index != -1 && index != i){
+            return true;
+        }
+    }
+
+    return false;
+}
