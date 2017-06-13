@@ -14,3 +14,26 @@ vector<int> BUBBLE_SORT(vector<int> v){
 
     return v;
 }
+
+/**Horner's Rule for polynomial evaluation**/
+/*2-3*/
+double Horner_Rule_Poly(vector<double> A, double x){
+    double y = 0.0;
+    int n = A.size();
+    for(int i = n - 1; i >= 0; i--){
+        y = A[i] + y * x;
+    }
+
+    return y;
+}
+
+/**Naive polynomial evaluation**/
+double Naive_Poly(vector<double> A, double x){
+    double y = 0.0;
+    int n = A.size();
+    for(int i = 0; i < n; i++){
+        y += A[i] * pow(x, i);
+    }
+
+    return y;
+}
