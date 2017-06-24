@@ -23,3 +23,15 @@ int RANDOM(int a, int b){
 
     return a + dbs.to_ulong();
 }
+
+/**5.1-3**/
+int Random(){
+    int x, y;
+    while(true){
+        x = BIASED-RANDOM();
+        y = BIASED-RANDOM();
+        if(x != y){
+            return x;
+        }
+    }
+}
