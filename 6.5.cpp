@@ -1,12 +1,3 @@
-#ifndef HEADER_H_INCLUDED
-#define HEADER_H_INCLUDED
-
-#include <climits>
-#include <cassert>
-#include <vector>
-#include <iostream>
-using namespace std;
-
 /*
     The priority queue is implemented by a max heap.
     The heap is stored in a vector and the index of the root is 1.
@@ -119,87 +110,256 @@ void MIN_HEAP_INSERT(vector<int>& A, int key){
 /**6.5-6**/
 class Node{
 public:
-    int key, value;
-    Node(int v){
-        key = INT_MIN;
-        value = v;
-    }
-}
-
-class QUEUE{
-public:
-    QUEUE();
-    int size();
-    void empty();
-    int top();
-    void push(int x);
-    void pop();
+    Node(int k, int v): key(k), value(v){};
+    int get_key();
+    int get_value();
+    void set_key(int k);
+    void set_value(int v);
+    Node& operator=(const Node& node);
 private:
-    void increase_key(int i, int k);    //Similar to HEAP_INCREASE_KEY
-    void insert(Node node); //Similar to MAX_HEAP_INSERT
+    int key;
+    int value;
+};
 
-    MAX_PRIORITY_QUEUE mpq;
+int Node::get_key(){
+    return key;
 }
 
-QUEUE::QUEUE(){
-    A.push_back(Node(INT_MAX));   //The 0-the element is not used.
+int Node::get_value(){
+    return value;
 }
 
-int QUEUE::size(){
-    return A.size() - 1;
+void Node::set_key(int k){
+    key = k;
 }
 
-void QUEUE::empty(){
-    while(size > 1){
-        A.pop_back();
+void Node::set_value(int v){
+    value = v;
+}
+
+Node& Node::operator=(const Node& node){
+    if(this != &node){
+        this->key = node.key;
+        this->value = node.value;
     }
+
+    return *this;
 }
 
-int QUEUE::top(){
-    assert(A.size() > 1);
+class MAX_PRIORITY_QUEUE{
+public:
+    MAX_PRIORITY_QUEUE();
+    int GET_SIZE();
+    Node MAXIMUM();
+    Node EXTRACT_MAX();
+    void INCREASE_KEY(int i, int k);
+    void INSERT(Node node);
+    void INCREASE_ALL_KEY();
+    void DECREASE_ALL_KEY();
+private:
+    int PARENT(int i);
+    int LEFT(int i);
+    int RIGHT(int i);
+    void MAX_HEAPIFY(int i);
+    vector<Node> nv;
+    int heap_size;
+};
 
-    return A[1].value;
+MAX_PRIORITY_QUEUE::MAX_PRIORITY_QUEUE(){
+    Node node(INT_MIN, 0);
+    nv.push_back(node);    //unused node
+    heap_size = 0;
 }
 
-void QUEUE::push(int x){
-    Node node = new Node(x);
-    int heap_size = A.size() - 1;
-    for(int i = 1; i <= heap_size; i++){
-        A[i].key++;
-    }
-    heap_insert(node);
+int MAX_PRIORITY_QUEUE::GET_SIZE(){
+    assert(heap_size >= 0);
+
+    return heap_size;
 }
 
-void QUEUQ::pop(){
-    int heap_size = A.size() - 1;
+/*
+    Return the element with the maximum key.
+*/
+Node MAX_PRIORITY_QUEUE::MAXIMUM(){
+    return nv[1];
+}
+
+/*
+    Return and delete the element with the maximum key.
+*/
+Node MAX_PRIORITY_QUEUE::EXTRACT_MAX(){
     assert(heap_size >= 1);
 
-    A.pop_back();
+    Node max_node = MAXIMUM();
+    nv[1] = nv[heap_size];
+    nv.pop_back();
     heap_size--;
-    for(int i = 1; i <= heap_size; i++){
-        A[i].key--;
-    }
+    MAX_HEAPIFY(1);
+
+    return max_node;
 }
 
-void QUEUE::increase_key(int i, int key){
-    assert(key > A[i].key);
+/*
+    Increase the key of the i-th element to k.
+*/
+void MAX_PRIORITY_QUEUE::INCREASE_KEY(int i, int k){
+    assert(k >= nv[i].get_key());
 
-    A[i].key = key;
-    while(i > 1 && A[PARENT(i)].key < A[i].key){
-        int tmp_key = A[i].key;
-        int tmp_value = A[i].value;
-        A[i].key = A[PARENT(i)].key;
-        A[i].value = A[PARENT(i)].value;
-        A[PARENT(i)].key = tmp_key;
-        A[PARENT(i)].value = tmp_value;
+    nv[i].set_key(k);
+    while(i > 1 && nv[PARENT(i)].get_key() < nv[i].get_key()){
+        Node tmp_node = nv[i];
+        nv[i] = nv[PARENT(i)];
+        nv[PARENT(i)] = tmp_node;
         i = PARENT(i);
     }
 }
 
-void QUEUE::insert(Node node){
-    A.push_back(INT_MIN);       //#include <climits>
-    int heap_size = A.size() - 1;
-    HEAP_INCREASE_KEY(A, heap_size, key);
+/*
+    Insert a node to the maximum priority queue.
+*/
+void MAX_PRIORITY_QUEUE::INSERT(Node node){
+   Node new_node(INT_MIN, node.get_value());
+
+   nv.push_back(new_node);
+   heap_size++;
+   INCREASE_KEY(heap_size, node.get_key());
 }
 
-#endif // HEADER_H_INCLUDED
+/*
+    Increase all keys in the maximum priority queue by 1.
+*/
+void MAX_PRIORITY_QUEUE::INCREASE_ALL_KEY(){
+    for(int i = 1; i <= heap_size; i++){
+        nv[i].set_key(nv[i].get_key() + 1);
+    }
+}
+
+/*
+    Decrease all keys in the maximum priority queue by 1.
+*/
+void MAX_PRIORITY_QUEUE::DECREASE_ALL_KEY(){
+    for(int i = 1; i <= heap_size; i++){
+        nv[i].set_key(nv[i].get_key() - 1);
+    }
+}
+
+int MAX_PRIORITY_QUEUE::PARENT(int i){
+    return i / 2;
+}
+
+int MAX_PRIORITY_QUEUE::LEFT(int i){
+    return 2 * i;
+}
+
+int MAX_PRIORITY_QUEUE::RIGHT(int i){
+    return 2 * i + 1;
+}
+
+void MAX_PRIORITY_QUEUE::MAX_HEAPIFY(int i){
+    int left = LEFT(i);
+    int right = RIGHT(i);
+
+    int largest = i;
+    if(left <= heap_size && nv[largest].get_key() < nv[left].get_key()){
+        largest = left;
+    }
+    if(right <= heap_size && nv[largest].get_key() < nv[right].get_key()){
+        largest = right;
+    }
+    if(largest != i){
+        Node tmp_node = nv[i];
+        nv[i] = nv[largest];
+        nv[largest] = tmp_node;
+        MAX_HEAPIFY(largest);
+    }
+}
+
+class FIFO_QUEUE{
+public:
+    bool empty();
+    int size();
+    int front();
+    int pop();
+    void push(int x);
+private:
+    MAX_PRIORITY_QUEUE mpq;
+};
+
+bool FIFO_QUEUE::empty(){
+    assert(mpq.GET_SIZE() >= 0);
+
+    if(mpq.GET_SIZE() == 0){
+        return true;
+    }else if(mpq.GET_SIZE() > 0){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+int FIFO_QUEUE::size(){
+    return mpq.GET_SIZE();
+}
+
+int FIFO_QUEUE::front(){
+    assert(mpq.GET_SIZE() > 0);
+
+    return mpq.MAXIMUM().get_value();
+}
+
+int FIFO_QUEUE::pop(){
+    assert(mpq.GET_SIZE() > 0);
+
+    return mpq.EXTRACT_MAX().get_value();
+}
+
+void FIFO_QUEUE::push(int x){
+    mpq.INCREASE_ALL_KEY();
+    Node new_node(INT_MIN, x);
+    mpq.INSERT(new_node);
+}
+
+class STACK{
+public:
+    bool empty();
+    int size();
+    int top();
+    int pop();
+    void push(int x);
+private:
+    MAX_PRIORITY_QUEUE mpq;
+};
+
+bool STACK::empty(){
+    assert(mpq.GET_SIZE() >= 0);
+
+    if(mpq.GET_SIZE() == 0){
+        return true;
+    }else if(mpq.GET_SIZE() > 0){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+int STACK::size(){
+    return mpq.GET_SIZE();
+}
+
+int STACK::top(){
+    assert(mpq.GET_SIZE() > 0);
+
+    return mpq.MAXIMUM().get_value();
+}
+
+int STACK::pop(){
+    assert(mpq.GET_SIZE() > 0);
+
+    return mpq.EXTRACT_MAX().get_value();
+}
+
+void STACK::push(int x){
+    mpq.DECREASE_ALL_KEY();
+    Node new_node(INT_MAX, x);
+    mpq.INSERT(new_node);
+}
