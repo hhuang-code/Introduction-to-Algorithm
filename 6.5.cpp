@@ -363,3 +363,16 @@ void STACK::push(int x){
     Node new_node(INT_MAX, x);
     mpq.INSERT(new_node);
 }
+
+/**6.5-7**/
+void HEAP_DELETE(vector<int>& A, int& heap_size, int i){
+    if(heap_size == i){
+        A.pop_back();
+        heap_size--;
+    }else{
+        A[i] = A[heap_size];
+        A.pop_back();
+        heap_size--;
+        MAX_HEAPIFY(A, heap_size, i);
+    }
+}
