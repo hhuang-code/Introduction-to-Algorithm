@@ -376,3 +376,126 @@ void HEAP_DELETE(vector<int>& A, int& heap_size, int i){
         MAX_HEAPIFY(A, heap_size, i);
     }
 }
+
+/**6.5-8 start**/
+#define LEFT(i) (2 * i)
+#define RIGHT(i) (2 * i + 1)
+
+class LinkNode{
+public:
+    LinkNode(int k, LinkNode* p): key(k), ptr(p){}
+    int get_key();
+    void set_key(int k);
+    LinkNode* get_ptr();
+    void set_ptr(LinkNode* p);
+private:
+    int key;
+    LinkNode* ptr;
+};
+
+int LinkNode::get_key(){
+    return key;
+}
+
+void LinkNode::set_key(int k){
+    key = k;
+}
+
+LinkNode* LinkNode::get_ptr(){
+    return ptr;
+}
+
+void LinkNode::set_ptr(LinkNode* p){
+    ptr = p;
+}
+
+void MIN_HEAPIFY(vector<LinkNode*>& A, int heap_size, int i){
+    int left = LEFT(i);
+    int right = RIGHT(i);
+
+    int smallest = i;
+    if(left <= heap_size && A[smallest]->get_key() > A[left]->get_key()){
+        smallest = left;
+    }
+    if(right <= heap_size && A[smallest]->get_key() > A[right]->get_key()){
+        smallest = right;
+    }
+    if(smallest != i){
+        LinkNode* tmp = A[i];
+        A[i] = A[smallest];
+        A[smallest] = tmp;
+        MIN_HEAPIFY(A, heap_size, smallest);
+    }
+}
+
+void BUILD_MIN_HEAP(vector<LinkNode*>& A, int heap_size){
+    for(int i = heap_size / 2; i >= 1; i--){
+        MIN_HEAPIFY(A, heap_size, i);
+    }
+}
+
+int main(){
+
+    vector<LinkNode*> v;
+    LinkNode* cur = NULL;
+    LinkNode* tmp = NULL;
+    int x, k, n;
+    n = 0;
+
+    cout << "Input k: ";
+    cin >> k;
+    cout << "Input elements of k links (input 0 to end every link):" << endl;
+    v.push_back(NULL);  //1-st element is unused.
+    for(int i = 1; i <= k; i++){
+        v.push_back(NULL);
+        do{
+           cin >> x;
+           if(x){
+            if(v[i] == NULL){
+                v[i] = new LinkNode(x, NULL);
+                cur = v[i];
+            }else{
+                tmp = new LinkNode(x, NULL);
+                cur->set_ptr(tmp);
+                cur = cur->get_ptr();
+            }
+            n++;
+           }
+        }while(x);
+    }
+
+    BUILD_MIN_HEAP(v, k);
+
+    LinkNode* head = NULL;
+    cur = NULL;
+    while(v.size() > 1){
+        if(v[1]){
+            MIN_HEAPIFY(v, k, 1);
+            if(head == NULL){
+                head = v[1];
+                cur = head;
+            }else{
+                cur->set_ptr(v[1]);
+                cur = v[1];
+            }
+            v[1] = v[1]->get_ptr();
+        }
+        if(!v[1]){
+            v[1] = v[k];
+            v.pop_back();
+            k--;
+        }
+    }
+
+    /*test start*/
+    cur = head;
+    while(cur){
+        cout << cur->get_key() << " ";
+        cur = cur->get_ptr();
+    }
+    cout << endl;
+    /*test end*/
+
+    return 0;
+}
+/**6.5-8 end**/
