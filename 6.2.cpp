@@ -133,7 +133,7 @@ void MIN_HEAPIFY(vector<int>& A, int heap_size, int i){
         int tmp = A[i];
         A[i] = A[smallest];
         A[smallest] = tmp;
-        MAX_HEAPIFY(A, heap_size, smallest);
+        MIN_HEAPIFY(A, heap_size, smallest);
     }
 }
 
