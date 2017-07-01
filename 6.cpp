@@ -51,3 +51,66 @@ void BUILD_MAX_HEAP_ALT(vector<int>& A, int heap_size){
     }
 }
 /**6-1 end**/
+
+/**6-2 start**/
+// k-th child of i-th element
+int CHILD(int i, int d, int k){
+    return d * (i - 1) + k + 1;
+}
+
+int PARENT(int i, int d){
+    return (i - 2) / d + 1;
+}
+
+void MAX_HEAPIFY(vector<int>& A, int d, int heap_size, int i){
+    int largest = i;
+    for(int k = 1; k <= d; k++){
+        if(CHILD(i, d, k) <= heap_size){
+            if(A[largest] < A[CHILD(i, d, k)]){
+                largest = CHILD(i, d, k);
+            }
+        }else{
+            break;
+        }
+    }
+
+    if(largest != i){
+        int tmp = A[i];
+        A[i] = A[largest];
+        A[largest] = tmp;
+        MAX_HEAPIFY(A, d, heap_size, largest);
+    }
+}
+
+void BUILD_MAX_HEAP(vector<int>& A, int d, int heap_size){
+    for(int i = (heap_size - 2) / d + 1; i >= 1; i--){
+        MAX_HEAPIFY(A, d, heap_size, i);
+    }
+}
+
+int EXTRACT_MAX(vector<int>& A, int d, int& heap_size){
+    assert(heap_size >= 1);
+
+    int max = A[1];
+    A[1] = A[heap_size];
+    A.pop_back();
+    heap_size--;
+    MAX_HEAPIFY(A, d, heap_size, 1);
+
+    return max;
+}
+
+/*
+    Increase the i-th value to k
+*/
+void INCREASET_KEY(vector<int>& A, int d, int i, int k){
+    A[i] = max(A[i], k);
+
+    while(i > 1 && A[PARENT(i, d)] < A[i]){
+        int tmp = A[i];
+        A[i] = A[PARENT(i, d)];
+        A[PARENT(i, d)] = tmp;
+        i = PARENT(i, d);
+    }
+}
+/**6-2 end*/
