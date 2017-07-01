@@ -114,3 +114,37 @@ void INCREASET_KEY(vector<int>& A, int d, int i, int k){
     }
 }
 /**6-2 end*/
+
+/**6-3 start**/
+/*
+    The tableau has m rows and n columns.
+*/
+int RIGHT(int col){
+    return col + 1;
+}
+
+int BOTTOM(int row){
+    return row + 1；
+}
+
+void BUILD_YOUNG_TABLEAU(int** Y, int m, int n){
+    int r = m - 1;
+    int c = n - 1;
+    bool empty = true;
+    for(int i = m - 1; i >= 0; i--){
+        for(int j = n - 1; j >= 0; j--){
+            if(Y[i][j] != INT_MAX){
+                r = i;
+                c = j;
+                empty = false;
+                break;
+            }
+        }
+        if(!empty){
+            break;
+        }
+    }
+
+
+}
+/**6-3 end*/
