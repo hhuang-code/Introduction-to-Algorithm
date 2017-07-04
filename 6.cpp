@@ -123,28 +123,193 @@ int RIGHT(int col){
     return col + 1;
 }
 
+int LEFT(int col){
+    return col - 1;
+}
+
 int BOTTOM(int row){
-    return row + 1；
+    return row + 1;
+}
+
+int TOP(int row){
+    return row - 1;
+}
+
+/*
+    Make the element Y[sr][sc] to be the minimum element.
+    The size of Y is sr...m and sc...n
+*/
+void MIN_TABLEAU(int** Y, int m, int n, int sr, int sc){
+    int right = RIGHT(sc);
+    int bottom = BOTTOM(sr);
+    int min_row = sr;
+    int min_col = sc;
+    if(right < n && Y[sr][right] < Y[min_row][min_col]){
+        min_row = sr;
+        min_col = right;
+    }
+    if(bottom < m && Y[bottom][sc] < Y[min_row][min_col]){
+        min_row = bottom;
+        min_col = sc;
+    }
+    if(min_row != sr || min_col != sc){
+        int tmp = Y[sr][sc];
+        Y[sr][sc] = Y[min_row][min_col];
+        Y[min_row][min_col] = tmp;
+        MIN_TABLEAU(Y, m, n, min_row, min_col);
+    }
 }
 
 void BUILD_YOUNG_TABLEAU(int** Y, int m, int n){
+    for(int i = m - 1; i >= 0; i--){
+        for(int j = n - 1; j >= 0; j--){
+            if(Y[i][j] != INT_MAX){
+                MIN_TABLEAU(Y, m, n, i, j);
+            }
+        }
+    }
+}
+
+int EXTRACT_MIN(int**Y, int m, int n){
+    int min = Y[0][0];
+    if(min == INT_MAX){
+        return min;
+    }
+
     int r = m - 1;
     int c = n - 1;
-    bool empty = true;
+    bool found = false;
     for(int i = m - 1; i >= 0; i--){
         for(int j = n - 1; j >= 0; j--){
             if(Y[i][j] != INT_MAX){
                 r = i;
                 c = j;
-                empty = false;
+                found = true;
                 break;
             }
         }
-        if(!empty){
+        if(found){
             break;
         }
     }
 
+    Y[0][0] = Y[r][c];
+    Y[r][c] = INT_MAX;
+    MIN_TABLEAU(Y, m, n, 0, 0);
 
+    return min;
+}
+
+/*
+    Insert x into the tableau.
+*/
+void INSERT_TABLEAU(int** Y, int m, int n, int x){
+    assert(Y[m - 1][n - 1] == INT_MAX);
+
+    int r = m - 1;
+    int c = n - 1;
+    bool found = false;
+    for(int i = m - 1; i >= 0; i--){
+        for(int j = n - 1; j >= 0; j--){
+            if(Y[i][j] != INT_MAX){
+                r = i;
+                c = j;
+                found = true;
+                break;
+            }
+        }
+        if(found){
+            break;
+        }
+    }
+    r = r + (c + 1) / n;
+    c = (c + 1) % n;
+    Y[r][c] = x;
+
+    int left = LEFT(c);
+    int top = TOP(r);
+    int max_row = r;
+    int max_col = c;
+    while(left >= 0 || top >= 0){
+        int left_value = INT_MIN;
+        int top_value = INT_MIN;
+        if(left >= 0){
+            left_value = Y[r][left];
+        }
+        if(top >= 0){
+            top_value = Y[top][c];
+        }
+
+        int largest = Y[r][c];
+        if(largest < left_value){
+            max_row = r;
+            max_col = left;
+            largest = left_value;
+        }
+        if(largest < top_value){
+            max_row = top;
+            max_col = c;
+            largest = top_value;
+        }
+        if(max_row != r || max_col != c){
+            int tmp = Y[r][c];
+            Y[r][c] = Y[max_row][max_col];
+            Y[max_row][max_col] = tmp;
+            r = max_row;
+            c = max_col;
+            left = LEFT(c);
+            top = TOP(r);
+        }else{
+            break;
+        }
+    }
+}
+
+/*
+    Sort n * n element by Young tableau.
+*/
+void YOUNG_TABLEAU_SORT(vector<int>& A){
+    int size = A.size();
+    assert(size == (int)sqrt(size) * (int)sqrt(size));
+
+    int n = sqrt(size);
+    int** Y;
+    Y = new int*[n];
+    for(int i = 0; i < n; i++){
+        Y[i] = new int[n];
+    }
+
+    for(int i = 0; i < size; i++){
+        Y[i / n][i % n] = A[i];
+    }
+
+    BUILD_YOUNG_TABLEAU(Y, n, n);
+
+    int cur = 0;
+    for(int i = n - 1; i >= 0; i--){
+        for(int j = n - 1; j >= 0; j--){
+            A[cur] = Y[0][0];
+            Y[0][0] = Y[i][j];
+            Y[i][j] = INT_MAX;
+            MIN_TABLEAU(Y, n, n, 0, 0);
+            cur++;
+        }
+    }
+}
+
+bool FIND_IN_TABLEAU(int** Y, int m, int n, int x){
+    int r = 0;
+    int c = n - 1;
+    while(r <= m - 1&& c >= 0){
+        if(Y[r][c] == x){
+            return true;
+        }else if(Y[r][c] > x){
+            c--;
+        }else{
+            r++;
+        }
+    }
+
+    return false;
 }
 /**6-3 end*/
