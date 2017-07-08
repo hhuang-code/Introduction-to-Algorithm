@@ -177,3 +177,83 @@ void RANDOMIZED_QUICKSORT_REVISED(vector<int>& A, int s, int e){
     }
 }
 /**7-5 end**/
+
+/**7-6 start**/
+struct closed_interval{
+    int left;
+    int right;
+};
+
+bool IS_OVERLAP(closed_interval x, closed_interval y){
+    if(x.right < y.left || x.left > y.right){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+closed_interval GET_OEVRLAP(closed_interval x, closed_interval y){
+    closed_interval ci;
+    ci.left = (x.left >= y.left ? x.left : y.left);
+    ci.right = (x.right <= y.right ? x.right : y.right);
+
+    return ci;
+}
+
+int INTERVAL_PARTITION(vector<closed_interval>& A, int s, int e){
+    closed_interval x = A[e];
+    int i = s - 1;
+    for(int j = s; j < e; j++){
+        if(A[j].left < x.left){
+            i++;
+            closed_interval tmp = A[j];
+            A[j] = A[i];
+            A[i] = tmp;
+        }
+    }
+    A[e] = A[i + 1];
+    A[i + 1] = x;
+
+    return i + 1;
+}
+
+void INTERVAL_QUICKSORT(vector<closed_interval>& A, int s, int e){
+    if(s < e){
+        int m = INTERVAL_PARTITION(A, s, e);
+
+        bool is_overlap = true;
+        closed_interval overlap = A[m - 1];
+        for(int i = m - 1; i >= s; i++){
+            if(IS_OVERLAP(overlap, A[i])){
+                overlap = GET_OEVRLAP(overlap, A[i]);
+            }else{
+                is_overlap = false;
+                break;
+            }
+        }
+        if(!is_overlap){
+            INTERVAL_QUICKSORT(A, s, m - 1);
+        }
+
+        is_overlap = false;
+        overlap = A[m + 1];
+        for(int i = m + 1; i <= e; i++){
+            if(IS_OVERLAP(overlap, A[i])){
+                overlap = GET_OEVRLAP(overlap, A[i]);
+            }else{
+                is_overlap = false;
+                break;
+            }
+        }
+        if(!is_overlap){
+            INTERVAL_QUICKSORT(A, m + 1, e);
+        }
+    }
+}
+
+void DISPLAY(vector<closed_interval>& A, int s, int e){
+    for(int i = s; i <= e; i++){
+        cout << "[" << A[i].left << " , " << A[i].right << "]" << endl;
+    }
+}
+/**7-6 end**/
