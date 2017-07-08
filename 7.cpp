@@ -101,3 +101,79 @@ void QUICKSORT_REVISED(vector<int>& A, int s, int e){
     }
 }
 /**7-4 end**/
+
+/**7-5 start**/
+int PARTITION(vector<int>& A, int s, int e){
+    int x = A[e];
+    int i = s - 1;
+    for(int j = s; j < e; j++){
+        if(A[j] < x){
+            i++;
+            int tmp = A[i];
+            A[i] = A[j];
+            A[j] = tmp;
+        }
+    }
+    A[e] = A[i + 1];
+    A[i + 1] = x;
+
+    return i + 1;
+}
+
+/*
+    Select three elements randomly, and choose the median as the pivot.
+*/
+int RANDOMIZED_PARTITION_REVISED(vector<int>& A, int s, int e){
+    int i = -1;
+    if(s - e + 1 >= 3){
+        srand((unsigned)time(0));
+        int idx1 = s + rand() % (e - s + 1);
+        int idx2 = s + rand() % (e - s + 1);
+        while(idx2 == idx1){
+            idx2 = s + rand() % (e - s + 1);
+        }
+        int idx3 = s + rand() % (e - s + 1);
+        while(idx3 == idx1 && idx3 == idx2){
+            idx3 = s + rand() % (e - s + 1);
+        }
+
+        if(A[idx1] < A[idx2]){
+            if(A[idx2] < A[idx3]){
+                i = idx2;
+            }else{
+                if(A[idx1] < A[idx3]){
+                    i = idx3;
+                }else{
+                    i = idx1;
+                }
+            }
+        }else{
+            if(A[idx1] < A[idx3]){
+                i = idx1;
+            }else{
+                if(A[idx2] < A[idx3]){
+                    i = idx3;
+                }else{
+                    i = idx2;
+                }
+            }
+        }
+    }else{
+        i = s + rand() % (e - s + 1);
+    }
+
+    int tmp = A[i];
+    A[i] = A[e];
+    A[e] = tmp;
+
+    return PARTITION(A, s, e);
+}
+
+void RANDOMIZED_QUICKSORT_REVISED(vector<int>& A, int s, int e){
+    if(s < e){
+        int m = RANDOMIZED_PARTITION_REVISED(A, s, e);
+        RANDOMIZED_QUICKSORT_REVISED(A, s, m - 1);
+        RANDOMIZED_QUICKSORT_REVISED(A, m + 1, e);
+    }
+}
+/**7-5 end**/
