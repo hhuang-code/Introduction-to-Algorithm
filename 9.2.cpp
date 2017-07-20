@@ -46,3 +46,27 @@ int RANDOMIZED_SELECT(vector<int>& A, int s, int e, int i){
         }
     }
 }
+
+/**9.2-3 start**/
+/*
+    Iteration version of RANDOMIZED_SELECT()
+*/
+int RANDOMIZED_SELECT_ITERATION(vector<int>& A, int s, int e , int i){
+    assert(i >= 1 && i <= (int)A.size());
+
+    while(s < e){
+        int q = RANDOMIZED_PARTITION(A, s, e);
+        int k = q - s + 1;
+        if(k == i){
+            return A[q];
+        }else if(k < i){
+            s = q + 1;
+            i = i - k;
+        }else{
+            e = q - 1;
+        }
+    }
+
+    return A[s];
+}
+/**9.2-3 end**/
