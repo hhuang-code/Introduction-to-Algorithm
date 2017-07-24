@@ -83,3 +83,47 @@ int SELECT(vector<int>& A, int s, int e, int i){
         }
     }
 }
+
+/**9.3-5 start**/
+int MEDIAN(vector<int> A, int s, int e){
+    vector<int> B;
+    for(int i = s; i <= e; i++){
+        B.push_back(A[i]);
+    }
+    int median = SELECT(B, 0, B.size() - 1, (B.size() + 1) / 2);
+
+    return median;
+}
+
+/*
+    Suppose the function MEDIAN() could find the median of an array in time O(n) and return its index.
+*/
+int SELECT_USING_MEDIAN(vector<int>& A, int s, int e, int i){
+    assert(i >= 1 && i <= (int)A.size());
+
+    if(s == e){
+        return A[s];
+    }else{
+        int median = MEDIAN(A, s, e);
+        //Partition the array by the median
+        int idx = e;
+        for(int j = s; j <= e; j++){
+            if(A[j] == median){
+                idx = j;
+                break;
+            }
+        }
+        A[idx] = A[e];
+        A[e] = median;
+        int m = PARTITION(A, s, e);
+        int k = m - s + 1;
+        if(i == k){
+            return A[m];
+        }else if(i < k){
+            return SELECT_USING_MEDIAN(A, s, m - 1, i);
+        }else{
+            return SELECT_USING_MEDIAN(A, m + 1, e, i - k);
+        }
+    }
+}
+/**9.3-5 end**/
