@@ -127,3 +127,32 @@ int SELECT_USING_MEDIAN(vector<int>& A, int s, int e, int i){
     }
 }
 /**9.3-5 end**/
+
+/**9.3-6 start**/
+/*
+    Array R is the result.
+*/
+void QUANTILE(vector<int>& A, vector<int>& R, int s, int e, int k){
+    if(k == 1){
+        return;
+    }else if(k == 2){
+        R.push_back(SELECT(A, s, e, (s + e) / 2 - (s - 1)));    //median
+        return;
+    }else{
+        int len = e - s + 1;
+        int interval = (len - (k - 1)) / k;
+        R.push_back(SELECT(A, s, e, interval * (k / 2) + k / 2 + s));
+        QUANTILE(A, R, s, interval * (k / 2) + k / 2 - 2, k / 2);   //left
+        QUANTILE(A, R, interval * (k / 2) + k / 2, e, k - k / 2);   //right
+    }
+}
+
+void QUANTILE_TEST(vector<int>& A, vector<int>& R, int s, int e, int k){
+    INSERTION_SORT(A, s, e);
+    int len = A.size();
+    int interval = (len - (k - 1)) / k;
+    for(int i = 1; i < k; i++){
+        R.push_back(A[interval * i + (i - 1)]);
+    }
+}
+/**9.3-6 end**/
