@@ -156,3 +156,42 @@ void QUANTILE_TEST(vector<int>& A, vector<int>& R, int s, int e, int k){
     }
 }
 /**9.3-6 end**/
+
+/**9.3-7 start**/
+/*
+    1. Use SELECT() to find the median. The left elements are smaller than the median, while the right are larger.
+    2. Construct another array B whose elements are abs(A[i] - median).
+    3. Find all the k smallest elements in B and then find the results in A.
+    Note: because of equal distance, the number of result elements might be k + 1.
+*/
+
+void FIND_K_MEDIANS(vector<int>& S, vector<int>& R, int k){
+    assert(k >= 1 && k <= S.size() - 1);
+    int median = SELECT(S, 0, S.size() - 1, (S.size() + 1) / 2);
+    cout << "median: " << median << endl;
+
+    int len = S.size();
+    vector<int> dist;
+    int mid = 0;
+    for(int i = 0; i < len; i++){
+        if(S[i] != median){
+            dist.push_back(abs(S[i] - median));
+        }else{
+            dist.push_back(INT_MAX);    //To ensure the median will be exculded in the result.
+            mid = i;
+        }
+    }
+
+    vector<int> T(dist);
+    int bound = SELECT(T, 0, T.size() - 1, k);
+    for(int i = 0; i < len; i++){
+        if(dist[i] <= bound){
+            if(i < mid){
+                R.push_back(median - dist[i]);
+            }else{
+                R.push_back(median + dist[i]);
+            }
+        }
+    }
+}
+/**9.3-7 end**/
