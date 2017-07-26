@@ -168,7 +168,6 @@ void QUANTILE_TEST(vector<int>& A, vector<int>& R, int s, int e, int k){
 void FIND_K_MEDIANS(vector<int>& S, vector<int>& R, int k){
     assert(k >= 1 && k <= S.size() - 1);
     int median = SELECT(S, 0, S.size() - 1, (S.size() + 1) / 2);
-    cout << "median: " << median << endl;
 
     int len = S.size();
     vector<int> dist;
