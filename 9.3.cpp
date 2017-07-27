@@ -194,3 +194,84 @@ void FIND_K_MEDIANS(vector<int>& S, vector<int>& R, int k){
     }
 }
 /**9.3-7 end**/
+
+/**9.3-8 start**/
+/*
+    Suppose X and Y are all in ascending order.
+*/
+int TWO_ARRAY_MEDIAN(vector<int> X, vector<int> Y){
+    assert(X.size() == Y.size());
+
+    if(X.size() == 1){
+        return X[0] < Y[0] ? X[0] : Y[0];
+    }
+
+    int xm, ym, xs, xe, ys, ye;
+    xs = ys = 0;
+    xe = ye = X.size() - 1;
+    while(xe - xs > 1 || ye - ys > 1){  // only 4 or less elements
+        xm = (xs + xe) / 2;
+        ym = (ys + ye) / 2;
+        if(X[xm] < Y[ym]){
+            xs = xm;
+            ye = ym;
+        }else{
+            xe = xm;
+            ys = ym;
+        }
+    }
+
+    vector<int> T;
+    for(int i = xs; i <= xe; i++){
+        T.push_back(X[i]);
+    }
+    for(int i = ys; i <= ye; i++){
+        T.push_back(Y[i]);
+    }
+    INSERTION_SORT(T, 0, T.size() - 1);
+
+    if(T.size() % 2){
+        return T[1];
+    }else{
+        return T[2];
+    }
+}
+
+int TWO_ARRAY_MEDIAN_TEST(vector<int> X, vector<int> Y){
+    assert(X.size() == Y.size());
+
+    int len = X.size();
+    vector<int> Z;
+    int i, j;
+    i = j = 0;
+    while(i < len && j < len){
+        if(X[i] < Y[j]){
+            Z.push_back(X[i]);
+            i++;
+        }else{
+            Z.push_back(Y[j]);
+            j++;
+        }
+    }
+
+    if(i < len){
+        while(i < len){
+            Z.push_back(X[i]);
+            i++;
+        }
+    }
+    if(j < len){
+        while(j < len){
+            Z.push_back(Y[j]);
+            j++;
+        }
+    }
+
+    for(int i = 0; i < 2 * len; i++){
+        cout << Z[i] << " ";
+    }
+    cout << endl;
+
+    return Z[len - 1];
+}
+/**9.3-8 end**/
